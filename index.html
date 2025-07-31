@@ -20,6 +20,7 @@
             --dark: #1a1a2e;
             --light: #f8f9fa;
             --success: #06d6a0;
+            --error: #ef476f;
         }
 
         body {
@@ -41,8 +42,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             position: relative;
-            display: flex; /* Make container a flexbox */
-            flex-direction: column; /* Stack header, content, footer */
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
@@ -53,27 +54,27 @@
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin-bottom: 5px;
             color: var(--accent);
             text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
         }
 
         .header p {
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
             opacity: 0.8;
         }
 
         .content-and-chat-wrapper {
             display: flex;
-            flex-grow: 1; /* Allow this wrapper to take available space */
-            flex-direction: row; /* Content and chat side-by-side */
+            flex-grow: 1;
+            flex-direction: row;
         }
 
         .content {
-            padding: 30px;
+            padding: 20px;
             min-height: 400px;
-            flex: 2; /* Content takes 2/3 of the space */
+            flex: 2;
         }
 
         .screen {
@@ -93,12 +94,12 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 1.1rem;
+            padding: 12px 25px;
+            font-size: 1rem;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin: 10px;
+            margin: 8px;
             display: inline-block;
             font-weight: bold;
             letter-spacing: 1px;
@@ -134,20 +135,29 @@
             box-shadow: 0 8px 20px rgba(255, 209, 102, 0.6);
         }
 
+        .btn-error {
+            background: var(--error);
+            box-shadow: 0 5px 15px rgba(239, 71, 111, 0.4);
+        }
+
+        .btn-error:hover {
+            box-shadow: 0 8px 20px rgba(239, 71, 111, 0.6);
+        }
+
         .input-group {
-            margin: 25px 0;
+            margin: 20px 0;
         }
 
         input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border-radius: 50px;
             border: 2px solid var(--secondary);
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             text-align: center;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         input:focus {
@@ -158,18 +168,18 @@
 
         label {
             display: block;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-size: 1rem;
         }
 
         .code-display {
-            font-size: 3rem;
+            font-size: clamp(2rem, 8vw, 3rem);
             font-weight: bold;
-            letter-spacing: 10px;
+            letter-spacing: 8px;
             background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
             color: var(--accent);
             text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
         }
@@ -178,17 +188,22 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin: 30px 0;
+            gap: 12px;
+            margin: 25px 0;
         }
 
         .player {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 15px;
-            min-width: 120px;
+            padding: 12px;
+            min-width: 110px;
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .player:hover {
+            transform: translateY(-3px);
         }
 
         .player.admin::after {
@@ -196,25 +211,26 @@
             position: absolute;
             top: 5px;
             right: 5px;
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
 
         .player .name {
             font-weight: bold;
             margin-bottom: 5px;
+            font-size: 0.95rem;
         }
 
         .player .status {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.8;
         }
 
         .question-container {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-            min-height: 200px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -222,7 +238,7 @@
         }
 
         .question {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2rem);
             font-weight: bold;
             text-align: center;
             line-height: 1.4;
@@ -231,16 +247,18 @@
         .actions {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
         }
 
         .action-btn {
             flex: 1;
+            min-width: 150px;
             max-width: 200px;
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -266,14 +284,18 @@
         }
 
         .admin-controls {
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: 25px;
+            padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
 
         .counter {
-            font-size: 1.5rem;
-            margin: 20px 0;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin: 15px 0;
             color: var(--accent);
         }
 
@@ -281,8 +303,8 @@
             display: none;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 15px;
+            margin: 15px 0;
         }
 
         .results.active {
@@ -293,38 +315,41 @@
         .result-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px;
+            padding: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
         }
 
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             background: rgba(26, 26, 46, 0.8);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0.7;
         }
 
         .loading {
             text-align: center;
-            padding: 20px;
-            font-size: 1.2rem;
+            padding: 15px;
+            font-size: 1.1rem;
         }
 
         .share-options {
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .share-btn {
-            padding: 10px 20px;
+            padding: 8px 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s ease;
+            font-size: 0.9rem;
         }
 
         .copy-btn {
@@ -347,13 +372,13 @@
 
         /* Chat Section Styles */
         .chat-section {
-            flex: 1; /* Chat takes 1/3 of the space */
+            flex: 1;
             background: rgba(0, 0, 0, 0.2);
             border-left: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
-            padding: 15px;
-            display: none; /* Hidden by default, activated on game screens */
+            padding: 12px;
+            display: none;
         }
 
         .chat-section.active {
@@ -361,9 +386,9 @@
         }
 
         .chat-header {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             color: var(--accent);
             text-align: center;
         }
@@ -373,21 +398,22 @@
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
             background: rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             gap: 5px;
+            min-height: 200px;
         }
 
         .chat-message {
             background: rgba(255, 255, 255, 0.1);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 12px;
             max-width: 90%;
             word-wrap: break-word;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         
         .chat-message.own {
@@ -400,23 +426,23 @@
             font-weight: bold;
             margin-bottom: 2px;
             color: var(--accent);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .chat-input-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .chat-input {
             flex-grow: 1;
-            padding: 10px;
+            padding: 8px;
             border-radius: 20px;
             border: 1px solid var(--secondary);
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 1rem;
-            padding-left: 15px;
+            font-size: 0.95rem;
+            padding-left: 12px;
         }
 
         .chat-input:focus {
@@ -429,13 +455,13 @@
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 50%; /* Make it a circle */
-            width: 40px; /* Fixed width */
-            height: 40px; /* Fixed height */
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 2px 5px rgba(255, 107, 107, 0.3);
@@ -450,10 +476,42 @@
             transform: scale(0.95);
         }
 
+        /* Mobile specific styles */
+        .mobile-warning {
+            display: none;
+            background: var(--error);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            z-index: 1000;
+            display: none;
+            animation: fadeInOut 3s ease;
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
         }
 
         @keyframes pulse {
@@ -466,16 +524,17 @@
             animation: pulse 2s infinite;
         }
 
-        @media (max-width: 850px) { /* Adjust breakpoint for chat */
+        @media (max-width: 850px) {
             .content-and-chat-wrapper {
-                flex-direction: column; /* Stack content and chat vertically on smaller screens */
+                flex-direction: column;
             }
             .chat-section {
                 border-left: none;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
+                min-height: 250px;
             }
             .content {
-                padding-bottom: 0; /* Adjust padding if needed */
+                padding-bottom: 0;
             }
         }
 
@@ -496,6 +555,22 @@
             .action-btn {
                 width: 100%;
                 max-width: none;
+                min-width: auto;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+                margin: 6px;
+            }
+            
+            .player {
+                min-width: 100px;
+                padding: 10px;
+            }
+            
+            .mobile-warning {
+                display: block;
             }
         }
     </style>
@@ -523,6 +598,7 @@
                         <div class="input-group">
                             <label>Enter your name to start playing:</label>
                             <input type="text" id="playerName" placeholder="Your name" maxlength="15">
+                            <p class="mobile-warning">On mobile: Rotate to landscape for best experience</p>
                         </div>
                         
                         <div>
@@ -583,6 +659,7 @@
                         
                         <div id="adminControls" class="admin-controls" style="display: none;">
                             <button class="btn pulse" id="lobbyStartGameBtn">Start Game</button>
+                            <button class="btn btn-secondary" id="addBotBtn">Add Bot</button>
                         </div>
                         
                         <button class="btn btn-secondary" id="leaveLobbyBtn"><i class="fas fa-sign-out-alt"></i> Leave Lobby</button>
@@ -636,6 +713,8 @@
         <div class="footer">
             <p>Made for teens | Safe and fun online game | Play responsibly</p>
         </div>
+        
+        <div class="toast" id="toast"></div>
     </div>
 
     <script>
@@ -652,6 +731,7 @@
         const chatMessagesDiv = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const chatSendBtn = document.getElementById('chatSendBtn');
+        const toast = document.getElementById('toast');
 
         // Game state
         const gameState = {
@@ -662,36 +742,48 @@
             currentQuestion: "",
             currentRound: 1,
             questions: [],
-            askedQuestionIndices: [], // Added to track asked questions
-            messages: [] // Store chat messages
+            askedQuestionIndices: [],
+            messages: [],
+            activeRooms: {}
         };
+        
+        // Bot names
+        const botNames = ['Alex', 'Taylor', 'Jordan', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Peyton', 'Dakota'];
         
         // Initialize the game
         async function initGame() {
-            // Load questions from JSON file
-            try {
-                const response = await fetch('questions.json');
-                if (!response.ok) {
-                    throw new Error('Failed to load questions');
-                }
-                // Assuming questions.json directly contains an array of strings, or an object with a 'questions' array
-                const data = await response.json();
-                gameState.questions = Array.isArray(data) ? data : data.questions; 
-                
-                // Hide loading screen and show home screen
+            // Create mock questions
+            gameState.questions = [
+                "Never have I ever cheated on a test",
+                "Never have I ever stayed up all night",
+                "Never have I ever lied to my parents",
+                "Never have I ever eaten something off the floor",
+                "Never have I ever had a secret crush",
+                "Never have I ever pretended to be sick to skip school",
+                "Never have I ever danced in the rain",
+                "Never have I ever sent a text to the wrong person",
+                "Never have I ever sung in the shower",
+                "Never have I ever walked into a glass door",
+                "Never have I ever cried during a movie",
+                "Never have I ever tried to learn a TikTok dance",
+                "Never have I ever eaten dessert before dinner",
+                "Never have I ever fallen asleep in class",
+                "Never have I ever forgotten a close friend's birthday",
+                "Never have I ever been scared of a horror movie",
+                "Never have I ever tried to cook and failed miserably",
+                "Never have I ever been caught doing something I shouldn't",
+                "Never have I ever laughed so hard I cried",
+                "Never have I ever pretended to laugh at a joke I didn't get"
+            ];
+            
+            // Hide loading screen and show home screen
+            setTimeout(() => {
                 screens.loading.classList.remove('active');
                 screens.home.classList.add('active');
-                
-                // Set up event listeners
-                setupEventListeners();
-            } catch (error) {
-                console.error('Error loading questions:', error);
-                screens.loading.innerHTML = `
-                    <p>⚠️ Error loading questions</p>
-                    <p>${error.message}</p>
-                    <button class="btn btn-accent" onclick="location.reload()">Try Again</button>
-                `;
-            }
+            }, 1000);
+            
+            // Set up event listeners
+            setupEventListeners();
         }
         
         function setupEventListeners() {
@@ -701,6 +793,7 @@
             document.getElementById('joinGameBtn').addEventListener('click', joinRoom);
             document.getElementById('lobbyStartGameBtn').addEventListener('click', startGame);
             document.getElementById('nextQuestionBtn').addEventListener('click', nextQuestion);
+            document.getElementById('addBotBtn').addEventListener('click', addBot);
             document.getElementById('yesBtn').addEventListener('click', () => answerQuestion(true));
             document.getElementById('noBtn').addEventListener('click', () => answerQuestion(false));
             
@@ -711,8 +804,8 @@
             // Back buttons
             document.getElementById('backToHomeBtn1').addEventListener('click', () => showScreen('home'));
             document.getElementById('backToHomeBtn2').addEventListener('click', () => showScreen('home'));
-            document.getElementById('leaveLobbyBtn').addEventListener('click', () => showScreen('home'));
-            document.getElementById('leaveGameBtn').addEventListener('click', () => showScreen('home'));
+            document.getElementById('leaveLobbyBtn').addEventListener('click', leaveLobby);
+            document.getElementById('leaveGameBtn').addEventListener('click', leaveGame);
             
             // Player name input
             document.getElementById('playerName').addEventListener('input', function(e) {
@@ -725,6 +818,11 @@
                 if (e.key === 'Enter') {
                     sendMessage();
                 }
+            });
+            
+            // Room code input uppercase
+            document.getElementById('roomCodeInput').addEventListener('input', function(e) {
+                e.target.value = e.target.value.toUpperCase().substring(0, 4);
             });
         }
         
@@ -740,6 +838,7 @@
             // Show/hide chat based on screen
             if (screenName === 'lobby' || screenName === 'game') {
                 chatSection.classList.add('active');
+                loadChatHistory();
             } else {
                 chatSection.classList.remove('active');
             }
@@ -747,7 +846,7 @@
         
         // Generate a random room code
         function generateRoomCode() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Avoid confusing characters
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let code = '';
             for (let i = 0; i < 4; i++) {
                 code += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -758,16 +857,29 @@
         // Create a new game room
         function createRoom() {
             if (!gameState.playerName) {
-                alert("Please enter your name first!");
+                showToast("Please enter your name first!");
                 return;
             }
             
             gameState.roomCode = generateRoomCode();
             gameState.isAdmin = true;
-            gameState.players = [{ name: gameState.playerName, isAdmin: true, hasDone: false }];
-            gameState.askedQuestionIndices = []; // Reset asked questions for a new game
-            gameState.currentRound = 1; // Ensure round count also resets for new game
-            gameState.messages = []; // Clear chat messages for a new room
+            gameState.players = [{ 
+                id: generatePlayerId(), 
+                name: gameState.playerName, 
+                isAdmin: true, 
+                isBot: false,
+                hasDone: false 
+            }];
+            gameState.askedQuestionIndices = [];
+            gameState.currentRound = 1;
+            gameState.messages = [];
+
+            // Create room in active rooms
+            gameState.activeRooms[gameState.roomCode] = {
+                players: [...gameState.players],
+                state: 'lobby',
+                messages: []
+            };
 
             // Update UI
             document.getElementById('roomCodeDisplay').textContent = gameState.roomCode;
@@ -779,7 +891,7 @@
         // Show join room screen
         function showJoinScreen() {
             if (!gameState.playerName) {
-                alert("Please enter your name first!");
+                showToast("Please enter your name first!");
                 return;
             }
             
@@ -791,50 +903,76 @@
             const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
             
             if (roomCode.length !== 4) {
-                alert("Please enter a valid 4-letter room code!");
+                showToast("Please enter a valid 4-letter room code!");
                 return;
             }
             
-            // In a real application, you'd send this to a server to validate the room code
-            // For this demo, we'll simulate a successful join with a dummy admin and player.
+            // Check if room exists
+            if (!gameState.activeRooms[roomCode]) {
+                showToast("Room not found! Check the code or create a new room.");
+                return;
+            }
+            
+            // Check if player name is already in use
+            const room = gameState.activeRooms[roomCode];
+            if (room.players.some(player => player.name === gameState.playerName)) {
+                showToast("Name already in use in this room!");
+                return;
+            }
             
             gameState.roomCode = roomCode;
             gameState.isAdmin = false;
-            // For demo, always assume there's an admin and add current player
-            gameState.players = [
-                { name: "Admin", isAdmin: true, hasDone: false }, 
-                { name: gameState.playerName, isAdmin: false, hasDone: false }
-            ]; 
-            gameState.askedQuestionIndices = []; // Reset asked questions for a new game
-            gameState.currentRound = 1; // Ensure round count also resets for new game
-            gameState.messages = []; // Clear chat messages for a new room
-
+            
+            // Add player to room
+            const newPlayer = {
+                id: generatePlayerId(),
+                name: gameState.playerName,
+                isAdmin: false,
+                isBot: false,
+                hasDone: false
+            };
+            
+            room.players.push(newPlayer);
+            gameState.players = [...room.players];
+            gameState.messages = [...room.messages];
+            
             // Update UI
             document.getElementById('lobbyRoomCode').textContent = gameState.roomCode;
             updatePlayerList();
             
             // Show admin controls only to admin
-            document.getElementById('adminControls').style.display = gameState.isAdmin ? 'block' : 'none';
+            document.getElementById('adminControls').style.display = gameState.players.some(p => p.isAdmin && p.name === gameState.playerName) ? 'block' : 'none';
             
             showScreen('lobby');
+            showToast(`Joined room ${roomCode}!`);
         }
         
         // Start the game
         function startGame() {
+            if (gameState.players.length < 2) {
+                showToast("You need at least 2 players to start!");
+                return;
+            }
+            
             gameState.currentRound = 1;
-            gameState.askedQuestionIndices = []; // Ensure it's empty when a game starts
+            gameState.askedQuestionIndices = [];
             showScreen('game');
-            nextQuestion(); // Call nextQuestion to load the first question
+            nextQuestion();
             
             // Show admin controls only to admin
             document.getElementById('gameAdminControls').style.display = gameState.isAdmin ? 'block' : 'none';
             document.getElementById('resultsPanel').classList.remove('active');
+            
+            // Update room state
+            if (gameState.activeRooms[gameState.roomCode]) {
+                gameState.activeRooms[gameState.roomCode].state = 'playing';
+            }
         }
         
         // Move to next question
         function nextQuestion() {
             // Check if all questions have been asked
-            if (gameState.askedQuestionIndices.length === gameState.questions.length) {
+            if (gameState.askedQuestionIndices.length >= gameState.questions.length) {
                 alert("You've gone through all the questions! Game over.");
                 showScreen('home');
                 return;
@@ -843,10 +981,10 @@
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * gameState.questions.length);
-            } while (gameState.askedQuestionIndices.includes(randomIndex)); // Keep picking until a unique index is found
+            } while (gameState.askedQuestionIndices.includes(randomIndex));
             
             gameState.currentQuestion = gameState.questions[randomIndex];
-            gameState.askedQuestionIndices.push(randomIndex); // Add the index to the asked list
+            gameState.askedQuestionIndices.push(randomIndex);
             
             // Reset player answers for the new round
             gameState.players.forEach(player => {
@@ -857,7 +995,7 @@
             document.getElementById('currentQuestion').textContent = gameState.currentQuestion;
             document.getElementById('roundCount').textContent = gameState.currentRound;
             document.getElementById('playerCount').textContent = gameState.players.length;
-            document.getElementById('resultsPanel').classList.remove('active'); // Hide previous results
+            document.getElementById('resultsPanel').classList.remove('active');
             
             gameState.currentRound++;
         }
@@ -870,20 +1008,17 @@
                 player.hasDone = hasDone;
             }
             
-            // For demo purposes, simulate other players' answers
-            if (!gameState.isAdmin) {
-                simulateOtherAnswers();
-            }
+            // Simulate other players' answers
+            simulateOtherAnswers();
             
             // Show results
             showResults();
         }
         
-        // Simulate other players answering (for demo)
+        // Simulate other players answering
         function simulateOtherAnswers() {
             gameState.players.forEach(player => {
                 if (player.name !== gameState.playerName) {
-                    // Randomly decide if they've done it (70% chance for "never")
                     player.hasDone = Math.random() < 0.3;
                 }
             });
@@ -899,7 +1034,7 @@
                 resultItem.className = 'result-item';
                 
                 resultItem.innerHTML = `
-                    <span>${player.name}${player.isAdmin ? ' 👑' : ''}</span>
+                    <span>${player.name}${player.isAdmin ? ' 👑' : ''}${player.isBot ? ' 🤖' : ''}</span>
                     <span>${player.hasDone ? 'I HAVE!' : 'NEVER!'}</span>
                 `;
                 
@@ -918,11 +1053,71 @@
                 const playerEl = document.createElement('div');
                 playerEl.className = `player ${player.isAdmin ? 'admin' : ''}`;
                 playerEl.innerHTML = `
-                    <div class="name">${player.name}</div>
+                    <div class="name">${player.name}${player.isBot ? ' 🤖' : ''}</div>
                     <div class="status">${player.isAdmin ? 'Admin' : 'Player'}</div>
                 `;
                 playersList.appendChild(playerEl);
             });
+        }
+        
+        // Add a bot to the game
+        function addBot() {
+            if (gameState.players.length >= 10) {
+                showToast("Maximum players reached!");
+                return;
+            }
+            
+            const availableNames = botNames.filter(name => 
+                !gameState.players.some(player => player.name === name)
+            );
+            
+            if (availableNames.length === 0) {
+                showToast("No more bot names available!");
+                return;
+            }
+            
+            const randomName = availableNames[Math.floor(Math.random() * availableNames.length)];
+            const bot = {
+                id: `bot-${Date.now()}`,
+                name: randomName,
+                isAdmin: false,
+                isBot: true,
+                hasDone: false
+            };
+            
+            gameState.players.push(bot);
+            updatePlayerList();
+            showToast(`Bot ${randomName} joined the game!`);
+        }
+        
+        // Leave lobby
+        function leaveLobby() {
+            if (gameState.roomCode && gameState.activeRooms[gameState.roomCode]) {
+                const room = gameState.activeRooms[gameState.roomCode];
+                room.players = room.players.filter(player => player.name !== gameState.playerName);
+                
+                // Remove room if empty
+                if (room.players.length === 0) {
+                    delete gameState.activeRooms[gameState.roomCode];
+                }
+            }
+            
+            showScreen('home');
+        }
+        
+        // Leave game
+        function leaveGame() {
+            if (gameState.roomCode && gameState.activeRooms[gameState.roomCode]) {
+                const room = gameState.activeRooms[gameState.roomCode];
+                room.players = room.players.filter(player => player.name !== gameState.playerName);
+                
+                // Remove room if empty
+                if (room.players.length === 0) {
+                    delete gameState.activeRooms[gameState.roomCode];
+                }
+            }
+            
+            showScreen('home');
         }
 
         // --- Chat Functions ---
@@ -933,12 +1128,18 @@
                 const message = {
                     sender: gameState.playerName,
                     text: messageText,
-                    timestamp: new Date().toLocaleTimeString()
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 };
                 gameState.messages.push(message);
+                
+                // Update room messages
+                if (gameState.activeRooms[gameState.roomCode]) {
+                    gameState.activeRooms[gameState.roomCode].messages.push(message);
+                }
+                
                 displayMessage(message);
-                chatInput.value = ''; // Clear input
-                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Scroll to bottom
+                chatInput.value = '';
+                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
             }
         }
 
@@ -951,7 +1152,7 @@
 
             const senderSpan = document.createElement('div');
             senderSpan.classList.add('sender');
-            senderSpan.textContent = `${message.sender} (${message.timestamp})`;
+            senderSpan.textContent = `${message.sender} • ${message.timestamp}`;
             
             const textSpan = document.createElement('div');
             textSpan.textContent = message.text;
@@ -962,28 +1163,41 @@
         }
 
         function loadChatHistory() {
-            chatMessagesDiv.innerHTML = ''; // Clear existing messages
+            chatMessagesDiv.innerHTML = '';
             gameState.messages.forEach(msg => displayMessage(msg));
-            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Scroll to bottom
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
-        // --- Share and Copy Functions ---
+        // --- Utility Functions ---
+
+        function generatePlayerId() {
+            return 'player-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
 
         function copyRoomCode() {
             const roomCode = gameState.roomCode;
             navigator.clipboard.writeText(roomCode)
                 .then(() => {
-                    alert(`Room code "${roomCode}" copied to clipboard!`);
+                    showToast(`Room code "${roomCode}" copied!`);
                 })
                 .catch(err => {
-                    console.error('Failed to copy text: ', err);
-                    alert('Failed to copy room code. Please try again or copy manually.');
+                    console.error('Failed to copy:', err);
+                    showToast('Failed to copy code');
                 });
         }
 
         function shareRoomCodeOnWhatsApp() {
             const roomCode = gameState.roomCode;
-            const message = `Come play Never Have I Ever with me! Room Code: ${roomCode}\nJoin here: ${window.location.href}`;
+            const message = `Join my Never Have I Ever game! Room Code: ${roomCode}`;
             const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         }
