@@ -717,7 +717,40 @@
         <div class="toast" id="toast"></div>
     </div>
 
-    <script>
+        <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDa1YHi0Z_W8BqZL1-c0WMcOXELrqdzdtQ",
+            authDomain: "never-have-i-ever---game.firebaseapp.com",
+            projectId: "never-have-i-ever---game",
+            storageBucket: "never-have-i-ever---game.appspot.com",
+            messagingSenderId: "2960424646",
+            appId: "1:2960424646:web:139ec82a2757f185c7e1c7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const roomsRef = database.ref('rooms');
+
+        // Game state
+        const gameState = {
+            playerName: "",
+            playerId: "",
+            roomCode: "",
+            isAdmin: false,
+            players: [],
+            currentQuestion: "",
+            currentRound: 1,
+            questions: [],
+            askedQuestionIndices: [],
+            messages: [],
+            activeRooms: {},
+            botTimeouts: []
+        };
+
+        const botNames = ["Alex", "Taylor", "Jordan", "Morgan", "Casey", "Riley", "Quinn", "Avery", "Peyton", "Dakota"];
+
         // DOM Elements
         const screens = {
             loading: document.getElementById('loadingScreen'),
@@ -732,97 +765,106 @@
         const chatInput = document.getElementById('chatInput');
         const chatSendBtn = document.getElementById('chatSendBtn');
         const toast = document.getElementById('toast');
-
-        // Game state
-        const gameState = {
-            playerName: "",
-            roomCode: "",
-            isAdmin: false,
-            players: [],
-            currentQuestion: "",
-            currentRound: 1,
-            questions: [],
-            askedQuestionIndices: [],
-            messages: [],
-            activeRooms: {}
-        };
-        
-        // Bot names
-        const botNames = ['Alex', 'Taylor', 'Jordan', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Peyton', 'Dakota'];
         
         // Initialize the game
-        async function initGame() {
-            // Create mock questions
-            gameState.questions = [
-                "Never have I ever cheated on a test",
-                "Never have I ever stayed up all night",
-                "Never have I ever lied to my parents",
-                "Never have I ever eaten something off the floor",
-                "Never have I ever had a secret crush",
-                "Never have I ever pretended to be sick to skip school",
-                "Never have I ever danced in the rain",
-                "Never have I ever sent a text to the wrong person",
-                "Never have I ever sung in the shower",
-                "Never have I ever walked into a glass door",
-                "Never have I ever cried during a movie",
-                "Never have I ever tried to learn a TikTok dance",
-                "Never have I ever eaten dessert before dinner",
-                "Never have I ever fallen asleep in class",
-                "Never have I ever forgotten a close friend's birthday",
-                "Never have I ever been scared of a horror movie",
-                "Never have I ever tried to cook and failed miserably",
-                "Never have I ever been caught doing something I shouldn't",
-                "Never have I ever laughed so hard I cried",
-                "Never have I ever pretended to laugh at a joke I didn't get"
-            ];
-            
-            // Hide loading screen and show home screen
-            setTimeout(() => {
-                screens.loading.classList.remove('active');
-                screens.home.classList.add('active');
-            }, 1000);
-            
+        function initGame() {
             // Set up event listeners
             setupEventListeners();
+            
+            // Load questions
+            loadQuestions();
+        }
+        
+        async function loadQuestions() {
+            try {
+                // Using a set of default questions
+                gameState.questions = [
+                    "Never have I ever cheated on a test",
+                    "Never have I ever stayed up all night",
+                    "Never have I ever lied to my parents",
+                    "Never have I ever eaten something off the floor",
+                    "Never have I ever had a secret crush",
+                    "Never have I ever pretended to be sick to skip school",
+                    "Never have I ever danced in the rain",
+                    "Never have I ever sent a text to the wrong person",
+                    "Never have I ever sung in the shower",
+                    "Never have I ever walked into a glass door",
+                    "Never have I ever cried during a movie",
+                    "Never have I ever tried to learn a TikTok dance",
+                    "Never have I ever eaten dessert before dinner",
+                    "Never have I ever fallen asleep in class",
+                    "Never have I ever forgotten a close friend's birthday",
+                    "Never have I ever been scared of a horror movie",
+                    "Never have I ever tried to cook and failed miserably",
+                    "Never have I ever been caught doing something I shouldn't",
+                    "Never have I ever laughed so hard I cried",
+                    "Never have I ever pretended to laugh at a joke I didn't get"
+                ];
+                
+                // Hide loading screen after a short delay
+                setTimeout(() => {
+                    screens.loading.classList.remove('active');
+                    screens.home.classList.add('active');
+                }, 1500);
+            } catch (error) {
+                console.error("Error loading questions:", error);
+                showToast("Error loading questions. Using default set.");
+                
+                // Use default questions
+                gameState.questions = [
+                    "Never have I ever cheated on a test",
+                    "Never have I ever stayed up all night"
+                ];
+                
+                // Hide loading screen
+                screens.loading.classList.remove('active');
+                screens.home.classList.add('active');
+            }
         }
         
         function setupEventListeners() {
+            // Home screen buttons
             document.getElementById('createRoomBtn').addEventListener('click', createRoom);
             document.getElementById('joinRoomBtn').addEventListener('click', showJoinScreen);
-            document.getElementById('startGameBtn').addEventListener('click', startGame);
-            document.getElementById('joinGameBtn').addEventListener('click', joinRoom);
-            document.getElementById('lobbyStartGameBtn').addEventListener('click', startGame);
-            document.getElementById('nextQuestionBtn').addEventListener('click', nextQuestion);
-            document.getElementById('addBotBtn').addEventListener('click', addBot);
-            document.getElementById('yesBtn').addEventListener('click', () => answerQuestion(true));
-            document.getElementById('noBtn').addEventListener('click', () => answerQuestion(false));
             
-            // Share and Copy Buttons
+            // Create screen buttons
+            document.getElementById('startGameBtn').addEventListener('click', startGame);
+            document.getElementById('backToHomeBtn1').addEventListener('click', () => showScreen('home'));
             document.getElementById('copyCodeBtn').addEventListener('click', copyRoomCode);
             document.getElementById('shareWhatsAppBtn').addEventListener('click', shareRoomCodeOnWhatsApp);
-
-            // Back buttons
-            document.getElementById('backToHomeBtn1').addEventListener('click', () => showScreen('home'));
+            document.getElementById('addBotBtn').addEventListener('click', addBot);
+            
+            // Join screen buttons
+            document.getElementById('joinGameBtn').addEventListener('click', joinRoom);
             document.getElementById('backToHomeBtn2').addEventListener('click', () => showScreen('home'));
+            
+            // Lobby screen buttons
+            document.getElementById('lobbyStartGameBtn').addEventListener('click', startGame);
             document.getElementById('leaveLobbyBtn').addEventListener('click', leaveLobby);
+            
+            // Game screen buttons
+            document.getElementById('nextQuestionBtn').addEventListener('click', nextQuestion);
+            document.getElementById('yesBtn').addEventListener('click', () => answerQuestion(true));
+            document.getElementById('noBtn').addEventListener('click', () => answerQuestion(false));
             document.getElementById('leaveGameBtn').addEventListener('click', leaveGame);
+            document.getElementById('addBotInGameBtn').addEventListener('click', addBot);
             
             // Player name input
             document.getElementById('playerName').addEventListener('input', function(e) {
                 gameState.playerName = e.target.value.trim().substring(0, 15);
             });
-
+            
+            // Room code input uppercase
+            document.getElementById('roomCodeInput').addEventListener('input', function(e) {
+                e.target.value = e.target.value.toUpperCase().substring(0, 4);
+            });
+            
             // Chat input and send button
             chatSendBtn.addEventListener('click', sendMessage);
             chatInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     sendMessage();
                 }
-            });
-            
-            // Room code input uppercase
-            document.getElementById('roomCodeInput').addEventListener('input', function(e) {
-                e.target.value = e.target.value.toUpperCase().substring(0, 4);
             });
         }
         
@@ -861,10 +903,14 @@
                 return;
             }
             
+            // Generate and display room code immediately
             gameState.roomCode = generateRoomCode();
+            document.getElementById('roomCodeDisplay').textContent = gameState.roomCode;
+            
             gameState.isAdmin = true;
+            gameState.playerId = 'player-' + Date.now();
             gameState.players = [{ 
-                id: generatePlayerId(), 
+                id: gameState.playerId,
                 name: gameState.playerName, 
                 isAdmin: true, 
                 isBot: false,
@@ -874,18 +920,40 @@
             gameState.currentRound = 1;
             gameState.messages = [];
 
-            // Create room in active rooms
-            gameState.activeRooms[gameState.roomCode] = {
-                players: [...gameState.players],
-                state: 'lobby',
+            // Create room in Firebase
+            const roomData = {
+                adminId: gameState.playerId,
+                players: {
+                    [gameState.playerId]: {
+                        id: gameState.playerId,
+                        name: gameState.playerName,
+                        isAdmin: true,
+                        isBot: false,
+                        hasDone: false
+                    }
+                },
+                currentQuestion: "",
+                currentRound: 1,
+                askedQuestionIndices: [],
+                state: "lobby",
                 messages: []
             };
-
-            // Update UI
-            document.getElementById('roomCodeDisplay').textContent = gameState.roomCode;
-            updatePlayerList();
             
-            showScreen('create');
+            roomsRef.child(gameState.roomCode).set(roomData)
+                .then(() => {
+                    // Update UI
+                    updatePlayerList();
+                    
+                    showScreen('create');
+                    showToast(`Room "${gameState.roomCode}" created! Share this code with friends!`);
+                    
+                    // Listen for changes to this room
+                    attachRoomListeners();
+                })
+                .catch(error => {
+                    console.error("Error creating room:", error);
+                    showToast("Failed to create room. Please try again.");
+                });
         }
         
         // Show join room screen
@@ -907,72 +975,94 @@
                 return;
             }
             
-            // Check if room exists
-            if (!gameState.activeRooms[roomCode]) {
-                showToast("Room not found! Check the code or create a new room.");
-                return;
-            }
-            
-            // Check if player name is already in use
-            const room = gameState.activeRooms[roomCode];
-            if (room.players.some(player => player.name === gameState.playerName)) {
-                showToast("Name already in use in this room!");
-                return;
-            }
-            
             gameState.roomCode = roomCode;
-            gameState.isAdmin = false;
+            gameState.playerId = 'player-' + Date.now();
             
-            // Add player to room
-            const newPlayer = {
-                id: generatePlayerId(),
-                name: gameState.playerName,
-                isAdmin: false,
-                isBot: false,
-                hasDone: false
-            };
-            
-            room.players.push(newPlayer);
-            gameState.players = [...room.players];
-            gameState.messages = [...room.messages];
-            
-            // Update UI
-            document.getElementById('lobbyRoomCode').textContent = gameState.roomCode;
-            updatePlayerList();
-            
-            // Show admin controls only to admin
-            document.getElementById('adminControls').style.display = gameState.players.some(p => p.isAdmin && p.name === gameState.playerName) ? 'block' : 'none';
-            
-            showScreen('lobby');
-            showToast(`Joined room ${roomCode}!`);
+            // Check if room exists
+            roomsRef.child(roomCode).once('value')
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        showToast("Room not found! Please check the code.");
+                        return;
+                    }
+                    
+                    const roomData = snapshot.val();
+                    
+                    // Check if player name is already in the room
+                    const players = Object.values(roomData.players || {});
+                    if (players.some(player => player.name === gameState.playerName)) {
+                        showToast("Name already in use in this room. Choose a different name.");
+                        return;
+                    }
+                    
+                    // Add player to the room
+                    const newPlayer = {
+                        id: gameState.playerId,
+                        name: gameState.playerName,
+                        isAdmin: false,
+                        isBot: false,
+                        hasDone: false
+                    };
+                    
+                    roomsRef.child(roomCode).child('players').child(gameState.playerId).set(newPlayer)
+                        .then(() => {
+                            // Update UI
+                            document.getElementById('lobbyRoomCode').textContent = roomCode;
+                            
+                            // Show admin controls only to admin
+                            document.getElementById('adminControls').style.display = 'none';
+                            
+                            showScreen('lobby');
+                            showToast(`Joined room ${roomCode}!`);
+                            
+                            // Listen for changes to this room
+                            attachRoomListeners();
+                        })
+                        .catch(error => {
+                            console.error("Error joining room:", error);
+                            showToast("Failed to join room. Please try again.");
+                        });
+                })
+                .catch(error => {
+                    console.error("Error checking room:", error);
+                    showToast("Error connecting to server. Please try again.");
+                });
         }
         
         // Start the game
         function startGame() {
             if (gameState.players.length < 2) {
-                showToast("You need at least 2 players to start!");
+                showToast("You need at least 2 players to start the game!");
                 return;
             }
             
             gameState.currentRound = 1;
             gameState.askedQuestionIndices = [];
-            showScreen('game');
-            nextQuestion();
             
-            // Show admin controls only to admin
-            document.getElementById('gameAdminControls').style.display = gameState.isAdmin ? 'block' : 'none';
-            document.getElementById('resultsPanel').classList.remove('active');
-            
-            // Update room state
-            if (gameState.activeRooms[gameState.roomCode]) {
-                gameState.activeRooms[gameState.roomCode].state = 'playing';
-            }
+            // Update room state to "playing"
+            roomsRef.child(gameState.roomCode).update({
+                state: "playing",
+                currentRound: 1,
+                askedQuestionIndices: []
+            })
+            .then(() => {
+                // Move to the first question
+                nextQuestion();
+            })
+            .catch(error => {
+                console.error("Error starting game:", error);
+                showToast("Failed to start game. Please try again.");
+            });
         }
         
         // Move to next question
         function nextQuestion() {
+            // Clear any existing bot timeouts
+            gameState.botTimeouts.forEach(timeout => clearTimeout(timeout));
+            gameState.botTimeouts = [];
+            
             // Check if all questions have been asked
-            if (gameState.askedQuestionIndices.length >= gameState.questions.length) {
+            if (gameState.askedQuestionIndices.length === gameState.questions.length) {
                 alert("You've gone through all the questions! Game over.");
                 showScreen('home');
                 return;
@@ -987,76 +1077,95 @@
             gameState.askedQuestionIndices.push(randomIndex);
             
             // Reset player answers for the new round
+            const playerUpdates = {};
             gameState.players.forEach(player => {
-                player.hasDone = false;
+                playerUpdates[player.id] = {
+                    hasDone: false
+                };
             });
             
-            // Update UI
-            document.getElementById('currentQuestion').textContent = gameState.currentQuestion;
-            document.getElementById('roundCount').textContent = gameState.currentRound;
-            document.getElementById('playerCount').textContent = gameState.players.length;
-            document.getElementById('resultsPanel').classList.remove('active');
+            // Update room state
+            roomsRef.child(gameState.roomCode).update({
+                currentQuestion: gameState.currentQuestion,
+                currentRound: gameState.currentRound,
+                askedQuestionIndices: gameState.askedQuestionIndices,
+                state: "playing"
+            })
+            .then(() => {
+                // Update player states
+                roomsRef.child(gameState.roomCode).child('players').update(playerUpdates);
+                
+                // Schedule bot answers
+                scheduleBotAnswers();
+            })
+            .catch(error => {
+                console.error("Error moving to next question:", error);
+                showToast("Failed to load next question. Please try again.");
+            });
             
             gameState.currentRound++;
         }
         
         // Player answers a question
         function answerQuestion(hasDone) {
-            // Update player state
-            const player = gameState.players.find(p => p.name === gameState.playerName);
-            if (player) {
-                player.hasDone = hasDone;
-            }
-            
-            // Simulate other players' answers
-            simulateOtherAnswers();
-            
-            // Show results
-            showResults();
-        }
-        
-        // Simulate other players answering
-        function simulateOtherAnswers() {
-            gameState.players.forEach(player => {
-                if (player.name !== gameState.playerName) {
-                    player.hasDone = Math.random() < 0.3;
-                }
+            // Update player state in Firebase
+            roomsRef.child(gameState.roomCode).child('players').child(gameState.playerId).update({
+                hasDone: hasDone
+            })
+            .then(() => {
+                showToast(`You answered: ${hasDone ? 'I HAVE!' : 'NEVER!'}`);
+                
+                // Add chat message
+                const message = {
+                    sender: "System",
+                    text: `${gameState.playerName} answered: ${hasDone ? 'I HAVE!' : 'NEVER!'}`,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    type: "system"
+                };
+                
+                const newMessageRef = roomsRef.child(gameState.roomCode).child('messages').push();
+                newMessageRef.set(message);
+            })
+            .catch(error => {
+                console.error("Error answering question:", error);
+                showToast("Failed to submit answer. Please try again.");
             });
         }
         
-        // Show results of the current question
-        function showResults() {
-            const resultsList = document.getElementById('resultsList');
-            resultsList.innerHTML = "";
+        // Schedule bot answers
+        function scheduleBotAnswers() {
+            const bots = gameState.players.filter(player => player.isBot && !player.hasDone);
             
-            gameState.players.forEach(player => {
-                const resultItem = document.createElement('div');
-                resultItem.className = 'result-item';
+            bots.forEach(bot => {
+                // Random delay between 1-5 seconds
+                const delay = 1000 + Math.random() * 4000;
                 
-                resultItem.innerHTML = `
-                    <span>${player.name}${player.isAdmin ? ' 👑' : ''}${player.isBot ? ' 🤖' : ''}</span>
-                    <span>${player.hasDone ? 'I HAVE!' : 'NEVER!'}</span>
-                `;
+                const timeout = setTimeout(() => {
+                    // Random answer (30% chance they have done it)
+                    const hasDone = Math.random() < 0.3;
+                    
+                    // Update bot answer in Firebase
+                    roomsRef.child(gameState.roomCode).child('players').child(bot.id).update({
+                        hasDone: hasDone
+                    })
+                    .then(() => {
+                        // Add chat message
+                        const message = {
+                            sender: "System",
+                            text: `${bot.name} answered: ${hasDone ? 'I HAVE!' : 'NEVER!'}`,
+                            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            type: "system"
+                        };
+                        
+                        const newMessageRef = roomsRef.child(gameState.roomCode).child('messages').push();
+                        newMessageRef.set(message);
+                    })
+                    .catch(error => {
+                        console.error("Error updating bot answer:", error);
+                    });
+                }, delay);
                 
-                resultsList.appendChild(resultItem);
-            });
-            
-            document.getElementById('resultsPanel').classList.add('active');
-        }
-        
-        // Update player list in lobby
-        function updatePlayerList() {
-            const playersList = document.getElementById('playersList');
-            playersList.innerHTML = "";
-            
-            gameState.players.forEach(player => {
-                const playerEl = document.createElement('div');
-                playerEl.className = `player ${player.isAdmin ? 'admin' : ''}`;
-                playerEl.innerHTML = `
-                    <div class="name">${player.name}${player.isBot ? ' 🤖' : ''}</div>
-                    <div class="status">${player.isAdmin ? 'Admin' : 'Player'}</div>
-                `;
-                playersList.appendChild(playerEl);
+                gameState.botTimeouts.push(timeout);
             });
         }
         
@@ -1077,49 +1186,133 @@
             }
             
             const randomName = availableNames[Math.floor(Math.random() * availableNames.length)];
+            const botId = 'bot-' + Date.now();
             const bot = {
-                id: `bot-${Date.now()}`,
+                id: botId,
                 name: randomName,
                 isAdmin: false,
                 isBot: true,
                 hasDone: false
             };
             
-            gameState.players.push(bot);
-            updatePlayerList();
-            showToast(`Bot ${randomName} joined the game!`);
+            // Add bot to Firebase
+            roomsRef.child(gameState.roomCode).child('players').child(botId).set(bot)
+                .then(() => {
+                    showToast(`Bot ${randomName} joined the game!`);
+                    
+                    // Add chat message
+                    const message = {
+                        sender: "System",
+                        text: `${randomName} (bot) joined the game`,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        type: "system"
+                    };
+                    
+                    const newMessageRef = roomsRef.child(gameState.roomCode).child('messages').push();
+                    newMessageRef.set(message);
+                })
+                .catch(error => {
+                    console.error("Error adding bot:", error);
+                    showToast("Failed to add bot. Please try again.");
+                });
         }
         
-        // Leave lobby
-        function leaveLobby() {
-            if (gameState.roomCode && gameState.activeRooms[gameState.roomCode]) {
-                const room = gameState.activeRooms[gameState.roomCode];
-                room.players = room.players.filter(player => player.name !== gameState.playerName);
-                
-                // Remove room if empty
-                if (room.players.length === 0) {
-                    delete gameState.activeRooms[gameState.roomCode];
-                }
-            }
+        // Update player list in lobby
+        function updatePlayerList() {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = "";
             
-            showScreen('home');
+            gameState.players.forEach(player => {
+                const playerEl = document.createElement('div');
+                playerEl.className = `player ${player.isAdmin ? 'admin' : ''} ${player.isBot ? 'bot' : ''}`;
+                
+                let statusText = player.isBot ? "Bot" : "Player";
+                if (player.isAdmin) statusText = "Admin";
+                
+                playerEl.innerHTML = `
+                    <div class="name">${player.name}</div>
+                    <div class="status">${statusText}</div>
+                `;
+                playersList.appendChild(playerEl);
+            });
         }
         
-        // Leave game
-        function leaveGame() {
-            if (gameState.roomCode && gameState.activeRooms[gameState.roomCode]) {
-                const room = gameState.activeRooms[gameState.roomCode];
-                room.players = room.players.filter(player => player.name !== gameState.playerName);
-                
-                // Remove room if empty
-                if (room.players.length === 0) {
-                    delete gameState.activeRooms[gameState.roomCode];
-                }
-            }
+        // Update results panel
+        function updateResultsPanel() {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = "";
             
-            showScreen('home');
+            gameState.players.forEach(player => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                let icon = player.isAdmin ? '👑' : (player.isBot ? '🤖' : '👤');
+                let answerText = "Waiting...";
+                
+                if (player.hasDone !== undefined && player.hasDone !== null) {
+                    answerText = player.hasDone ? 'I HAVE!' : 'NEVER!';
+                }
+                
+                resultItem.innerHTML = `
+                    <span><span class="player-icon">${icon}</span> ${player.name}</span>
+                    <span>${answerText}</span>
+                `;
+                
+                resultsList.appendChild(resultItem);
+            });
         }
-
+        
+        // Listen for room changes
+        function attachRoomListeners() {
+            roomsRef.child(gameState.roomCode).on('value', snapshot => {
+                if (!snapshot.exists()) {
+                    showToast("The room has been closed.");
+                    showScreen('home');
+                    return;
+                }
+                
+                const roomData = snapshot.val();
+                gameState.players = Object.values(roomData.players || {});
+                gameState.currentQuestion = roomData.currentQuestion || "";
+                gameState.currentRound = roomData.currentRound || 1;
+                gameState.askedQuestionIndices = roomData.askedQuestionIndices || [];
+                gameState.messages = roomData.messages || [];
+                
+                // Update UI based on room state
+                if (roomData.state === "lobby") {
+                    showScreen('lobby');
+                    updatePlayerList();
+                    
+                    // Show admin controls if current player is admin
+                    const isAdmin = gameState.players.some(p => 
+                        p.id === gameState.playerId && p.isAdmin
+                    );
+                    document.getElementById('adminControls').style.display = isAdmin ? 'flex' : 'none';
+                } 
+                else if (roomData.state === "playing") {
+                    showScreen('game');
+                    document.getElementById('currentQuestion').textContent = gameState.currentQuestion;
+                    document.getElementById('roundCount').textContent = gameState.currentRound;
+                    document.getElementById('playerCount').textContent = gameState.players.length;
+                    
+                    // Update results panel
+                    updateResultsPanel();
+                    
+                    // Show admin controls if current player is admin
+                    const isAdmin = gameState.players.some(p => 
+                        p.id === gameState.playerId && p.isAdmin
+                    );
+                    document.getElementById('gameAdminControls').style.display = isAdmin ? 'flex' : 'none';
+                }
+            });
+            
+            // Listen for chat messages
+            roomsRef.child(gameState.roomCode).child('messages').on('child_added', snapshot => {
+                const message = snapshot.val();
+                displayMessage(message);
+            });
+        }
+        
         // --- Chat Functions ---
 
         function sendMessage() {
@@ -1128,31 +1321,44 @@
                 const message = {
                     sender: gameState.playerName,
                     text: messageText,
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    type: "player"
                 };
-                gameState.messages.push(message);
                 
-                // Update room messages
-                if (gameState.activeRooms[gameState.roomCode]) {
-                    gameState.activeRooms[gameState.roomCode].messages.push(message);
-                }
-                
-                displayMessage(message);
-                chatInput.value = '';
-                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+                // Add message to Firebase
+                const newMessageRef = roomsRef.child(gameState.roomCode).child('messages').push();
+                newMessageRef.set(message)
+                    .then(() => {
+                        chatInput.value = '';
+                    })
+                    .catch(error => {
+                        console.error("Error sending message:", error);
+                        showToast("Failed to send message. Please try again.");
+                    });
             }
         }
 
         function displayMessage(message) {
             const messageEl = document.createElement('div');
             messageEl.classList.add('chat-message');
+            
             if (message.sender === gameState.playerName) {
                 messageEl.classList.add('own');
+            }
+            
+            if (message.type === "system") {
+                messageEl.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                messageEl.style.fontStyle = 'italic';
             }
 
             const senderSpan = document.createElement('div');
             senderSpan.classList.add('sender');
-            senderSpan.textContent = `${message.sender} • ${message.timestamp}`;
+            
+            if (message.sender === "System") {
+                senderSpan.textContent = `⚡ ${message.sender} • ${message.timestamp}`;
+            } else {
+                senderSpan.textContent = `${message.sender} • ${message.timestamp}`;
+            }
             
             const textSpan = document.createElement('div');
             textSpan.textContent = message.text;
@@ -1160,50 +1366,79 @@
             messageEl.appendChild(senderSpan);
             messageEl.appendChild(textSpan);
             chatMessagesDiv.appendChild(messageEl);
+            
+            // Scroll to bottom
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
         function loadChatHistory() {
             chatMessagesDiv.innerHTML = '';
             gameState.messages.forEach(msg => displayMessage(msg));
-            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
         // --- Utility Functions ---
-
-        function generatePlayerId() {
-            return 'player-' + Math.random().toString(36).substr(2, 9);
+        
+        function leaveLobby() {
+            // Remove player from room
+            roomsRef.child(gameState.roomCode).child('players').child(gameState.playerId).remove()
+                .then(() => {
+                    showScreen('home');
+                    showToast("Left the lobby");
+                })
+                .catch(error => {
+                    console.error("Error leaving lobby:", error);
+                    showToast("Failed to leave lobby. Please try again.");
+                });
         }
-
-        function showToast(message) {
-            toast.textContent = message;
-            toast.style.display = 'block';
+        
+        function leaveGame() {
+            // Clear any bot timeouts
+            gameState.botTimeouts.forEach(timeout => clearTimeout(timeout));
+            gameState.botTimeouts = [];
             
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
+            // Remove player from room
+            roomsRef.child(gameState.roomCode).child('players').child(gameState.playerId).remove()
+                .then(() => {
+                    showScreen('home');
+                    showToast("Left the game");
+                })
+                .catch(error => {
+                    console.error("Error leaving game:", error);
+                    showToast("Failed to leave game. Please try again.");
+                });
         }
-
+        
         function copyRoomCode() {
             const roomCode = gameState.roomCode;
             navigator.clipboard.writeText(roomCode)
                 .then(() => {
-                    showToast(`Room code "${roomCode}" copied!`);
+                    showToast(`Room code "${roomCode}" copied to clipboard!`);
                 })
                 .catch(err => {
-                    console.error('Failed to copy:', err);
-                    showToast('Failed to copy code');
+                    console.error('Failed to copy text: ', err);
+                    showToast('Failed to copy room code. Please try again or copy manually.');
                 });
         }
 
         function shareRoomCodeOnWhatsApp() {
             const roomCode = gameState.roomCode;
-            const message = `Join my Never Have I Ever game! Room Code: ${roomCode}`;
+            const message = `Come play Never Have I Ever with me! Room Code: ${roomCode}`;
             const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         }
         
+        function showToast(message) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            toast.style.animation = 'none';
+            void toast.offsetWidth; // Trigger reflow
+            toast.style.animation = 'fadeInOut 3.5s forwards';
+        }
+
         // Initialize the game when page loads
         window.addEventListener('DOMContentLoaded', initGame);
     </script>
+</body>
+</html>
 </body>
 </html>
